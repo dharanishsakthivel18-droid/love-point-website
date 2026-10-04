@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>LOVE POINT | Where two hearts stay connected</title>
+<meta name="description" content="LOVE POINT is a private, premium space for two people: private chat, a shared Memory Wall and more." />
+<meta name="theme-color" content="#000000" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❤️</text></svg>" />
+
+<style>
+  /* Put Beiltro.otf next to this file for the calligraphy logo */
+  @font-face {
+    font-family: "Beiltro";
+    src: url("Beiltro.otf") format("opentype");
+    font-display: swap;
+  }
+
+  :root {
+    --black: #000000;
+    --ink: #060306;
+    --panel: #0c070b;
+    --panel2: #120a10;
+    --pink: #ff4d9d;
+    --hot: #ff176b;
+    --rose: #ffb3d1;
+    --text: #f6f1f4;
+    --muted: rgba(246, 241, 244, 0.58);
+    --faint: rgba(246, 241, 244, 0.32);
+    --line: rgba(255, 255, 255, 0.08);
+    --lineP: rgba(255, 77, 157, 0.32);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--black);
+    color: var(--text);
+    line-height: 1.65;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* subtle film grain + top glow for depth */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(900px 500px at 50% -10%, rgba(255, 23, 107, 0.16), transparent 60%),
+      radial-gradient(600px 400px at 100% 60%, rgba(255, 77, 157, 0.07), transparent 60%);
+  }
+
+  a { color: inherit; text-decoration: none; }
+  .wrap { width: min(1140px, 92%); margin: 0 auto; position: relative; z-index: 1; }
+
+  .script {
+    font-family: "Beiltro", "Brush Script MT", "Segoe Script", cursive;
+    font-weight: 400;
+  }
+
+  .grad-text {
+    background: linear-gradient(180deg, #ffffff 20%, var(--rose) 60%, var(--pink));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  /* ---------- NAV ---------- */
+  nav {
+    position: sticky; top: 0; z-index: 60;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-in { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .brand { font-size: 30px; display: flex; align-items: center; gap: 8px; color: #fff; }
+  .brand i { color: var(--pink); font-style: normal; font-size: 16px; }
+  .links { display: flex; align-items: center; gap: 30px; font-size: 13.5px; color: var(--muted); letter-spacing: 0.3px; }
+  .links a:hover { color: #fff; }
+
+  /* ---------- BUTTONS ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 15px 30px; border-radius: 999px; border: 0; cursor: pointer;
+    font-size: 14px; font-weight: 700; letter-spacing: 0.6px; color: #fff; font-family: inherit;
+    background: linear-gradient(100deg, #ff4d8d, var(--hot));
+    box-shadow: 0 8px 30px rgba(255, 23, 107, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255, 23, 107, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.3); }
+  .btn.sm { padding: 10px 20px; font-size: 12.5px; }
+  .btn.ghost {
+    background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line); color: var(--text);
+    box-shadow: none; backdrop-filter: blur(8px);
+  }
+  .btn.ghost:hover { border-color: var(--lineP); background: rgba(255, 77, 157, 0.08); box-shadow: none; }
+
+  /* ---------- HERO ---------- */
+  .hero { padding: 90px 0 40px; }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items: center; }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 9px; padding: 8px 16px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 600; letter-spacing: 2px; color: var(--rose);
+    border: 1px solid var(--lineP); background: rgba(255, 77, 157, 0.06);
+  }
+  .pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--pink); box-shadow: 0 0 10px var(--pink); }
+
+  .hero h1 {
+    font-size: clamp(64px, 10vw, 132px); line-height: 0.95; margin: 26px 0 14px;
+    text-shadow: 0 0 40px rgba(255, 23, 107, 0.35);
+  }
+  .tag { font-size: 13px; letter-spacing: 5px; text-transform: uppercase; color: var(--rose); }
+  .lead { max-width: 500px; margin-top: 24px; color: var(--muted); font-size: 17px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 36px; }
+  .note { margin-top: 18px; font-size: 12.5px; color: var(--faint); letter-spacing: 0.4px; }
+
+  .trust { display: flex; gap: 34px; margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--line); }
+  .trust b { display: block; font-size: 22px; color: #fff; font-weight: 700; }
+  .trust span { font-size: 12px; color: var(--faint); letter-spacing: 0.5px; }
+
+  /* ---------- PHONE MOCKUP ---------- */
+  .phone-wrap { display: grid; place-items: center; position: relative; }
+  .phone-wrap::before {
+    content: ""; position: absolute; width: 380px; height: 380px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 23, 107, 0.4), transparent 68%); filter: blur(30px);
+  }
+  .phone {
+    position: relative; width: 290px; height: 590px; border-radius: 46px; padding: 11px;
+    background: linear-gradient(145deg, #2b2b2e, #070707 55%, #1d1d20);
+    box-shadow: 0 40px 90px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 70px rgba(255, 23, 107, 0.22);
+    animation: bob 7s ease-in-out infinite;
+  }
+  @keyframes bob { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-14px) rotate(1deg); } }
+  .screen {
+    width: 100%; height: 100%; border-radius: 36px; overflow: hidden; position: relative;
+    background: linear-gradient(180deg, #050005, #12000b 25%, #300018 60%, #12000b);
+    padding: 34px 14px 14px;
+  }
+  .notch { position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 84px; height: 22px; border-radius: 14px; background: #000; z-index: 3; }
+  .s-head { display: flex; align-items: center; justify-content: space-between; }
+  .s-menu { font-size: 8px; font-weight: 800; color: #ff8bc2; border: 1px solid #ff3f9a; border-radius: 9px; padding: 5px 8px; background: rgba(255, 0, 120, 0.1); }
+  .s-logo { font-size: 19px; color: #fff; text-shadow: 0 0 10px #ff2182; }
+  .s-bell { width: 26px; height: 26px; border-radius: 50%; border: 1px solid #ff4d9d; display: grid; place-items: center; font-size: 11px; background: rgba(255, 0, 110, 0.15); }
+  .s-greet { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
+  .s-av { width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #ff3b93, #6b0036); border: 2px solid #ff3b93; box-shadow: 0 0 14px rgba(255, 25, 128, 0.7); display: grid; place-items: center; font-size: 18px; }
+  .s-greet small { font-size: 9px; color: #f3d9e7; display: block; }
+  .s-greet b { font-size: 15px; color: #fff; }
+  .s-card {
+    margin-top: 16px; text-align: center; padding: 18px 10px; border-radius: 18px;
+    background: linear-gradient(135deg, rgba(255, 20, 110, 0.3), rgba(130, 0, 65, 0.4));
+    border: 1px solid #ff65ae; box-shadow: 0 0 24px rgba(255, 22, 128, 0.35);
+  }
+  .s-card small { font-size: 7.5px; letter-spacing: 2px; color: #f8c7e1; font-weight: 800; }
+  .s-card .n { font-size: 27px; font-weight: 900; letter-spacing: 5px; color: #fff; text-shadow: 0 0 12px #ff2a8b; margin: 4px 0; }
+  .s-btn { margin: 8px auto 0; width: 80%; padding: 9px 0; border-radius: 99px; font-size: 8px; font-weight: 800; letter-spacing: 0.8px; background: linear-gradient(90deg, #ff4d8d, #ff176b); }
+  .s-find { margin-top: 16px; }
+  .s-find b { font-size: 9px; letter-spacing: 0.8px; font-weight: 900; }
+  .s-input { margin-top: 8px; height: 30px; border-radius: 99px; border: 1px solid #ff72ba; background: rgba(0, 0, 0, 0.45); font-size: 11px; letter-spacing: 4px; color: #76606f; display: flex; align-items: center; padding-left: 14px; }
+  .s-nav {
+    position: absolute; left: 10px; right: 10px; bottom: 10px; height: 44px; border-radius: 18px;
+    background: rgba(0, 0, 0, 0.9); border: 1px solid rgba(255, 40, 140, 0.5);
+    display: flex; justify-content: space-around; align-items: center; font-size: 13px; color: #aaa0aa;
+  }
+  .s-nav .on { color: #ff2a8b; }
+
+  /* ---------- SECTIONS ---------- */
+  section { padding: 100px 0; position: relative; }
+  .eyebrow { font-size: 11.5px; font-weight: 700; letter-spacing: 4px; color: var(--pink); text-align: center; }
+  h2 { font-size: clamp(30px, 4.6vw, 48px); font-weight: 700; text-align: center; margin: 14px 0 14px; letter-spacing: -0.5px; line-height: 1.15; }
+  .sub { text-align: center; color: var(--muted); max-width: 580px; margin: 0 auto 56px; font-size: 16px; }
+
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--lineP), transparent); width: min(1140px, 92%); margin: 0 auto; }
+
+  /* ---------- CARDS ---------- */
+  .grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+  .card {
+    position: relative; padding: 32px 28px; border-radius: 26px;
+    background: linear-gradient(160deg, var(--panel2), var(--panel));
+    border: 1px solid var(--line); overflow: hidden;
+    transition: transform 0.35s, border-color 0.35s, box-shadow 0.35s;
+  }
+  .card::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+    background: radial-gradient(420px 200px at 50% 0%, rgba(255, 23, 107, 0.16), transparent 70%);
+    transition: opacity 0.35s;
+  }
+  .card:hover { transform: translateY(-6px); border-color: var(--lineP); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 23, 107, 0.1); }
+  .card:hover::before { opacity: 1; }
+
+  .ico {
+    width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; font-size: 24px; margin-bottom: 22px;
+    background: rgba(255, 77, 157, 0.08); border: 1px solid var(--lineP);
+    box-shadow: inset 0 0 20px rgba(255, 23, 107, 0.12);
+  }
+  .card h3 { font-size: 19px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .card p { color: var(--muted); font-size: 14.5px; }
+
+  .soon {
+    display: inline-block; margin-left: 8px; padding: 3px 9px; border-radius: 99px; font-size: 9px; font-weight: 800;
+    letter-spacing: 1.2px; color: #ffcf9a; border: 1px solid rgba(255, 207, 154, 0.35); background: rgba(255, 207, 154, 0.08);
+    vertical-align: middle;
+  }
+
+  /* steps */
+  .steps { counter-reset: s; }
+  .step { padding-top: 84px; }
+  .step::after {
+    counter-increment: s; content: "0" counter(s);
+    position: absolute; top: 24px; left: 28px; font-size: 40px; font-weight: 800; letter-spacing: -1px;
+    background: linear-gradient(180deg, var(--pink), rgba(255, 23, 107, 0.15));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  /* id showcase */
+  .showcase { display: grid; place-items: center; margin-top: 56px; }
+  .idcard {
+    width: min(460px, 100%); text-align: center; padding: 42px 26px; border-radius: 30px;
+    background: linear-gradient(135deg, rgba(255, 20, 110, 0.2), rgba(20, 0, 10, 0.9) 55%, rgba(255, 20, 110, 0.14));
+    border: 1px solid rgba(255, 101, 174, 0.7); box-shadow: 0 0 80px rgba(255, 22, 128, 0.25);
+  }
+  .idcard small { letter-spacing: 4px; font-weight: 700; color: var(--rose); font-size: 11px; }
+  .idcard .num { font-size: clamp(44px, 9vw, 64px); font-weight: 800; letter-spacing: 12px; margin: 14px 0 6px; text-shadow: 0 0 26px #ff2a8b; padding-left: 12px; }
+  .idcard p { font-size: 13.5px; color: var(--muted); }
+
+  /* privacy */
+  .two { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .list { list-style: none; margin-top: 6px; }
+  .list li { display: flex; gap: 14px; margin: 16px 0; color: var(--muted); font-size: 14.5px; }
+  .list li::before { content: "♥"; color: var(--pink); flex-shrink: 0; margin-top: 1px; }
+  .list b { color: #fff; font-weight: 600; }
+
+  /* faq */
+  details { background: linear-gradient(160deg, var(--panel2), var(--panel)); border: 1px solid var(--line); border-radius: 20px; padding: 20px 24px; margin-bottom: 12px; transition: border-color 0.3s; }
+  details[open] { border-color: var(--lineP); }
+  summary { cursor: pointer; font-weight: 600; font-size: 15.5px; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: var(--pink); font-size: 24px; font-weight: 300; line-height: 1; transition: transform 0.3s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { margin-top: 14px; color: var(--muted); font-size: 14.5px; }
+
+  /* download */
+  .dl {
+    position: relative; text-align: center; padding: 80px 24px; border-radius: 36px; overflow: hidden;
+    background: radial-gradient(700px 320px at 50% 0%, rgba(255, 23, 107, 0.28), transparent 70%), linear-gradient(160deg, #100008, #000);
+    border: 1px solid rgba(255, 101, 174, 0.5); box-shadow: 0 0 90px rgba(255, 22, 128, 0.18);
+  }
+  .dl h2 { margin-top: 12px; }
+  .dl .sub { margin-bottom: 34px; }
+  .meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 26px; margin-top: 30px; font-size: 13px; color: var(--faint); letter-spacing: 0.5px; }
+
+  /* policy */
+  .policy { max-width: 760px; margin: 0 auto; }
+  .policy h3 { margin: 34px 0 10px; font-size: 17px; color: #fff; font-weight: 600; }
+  .policy p, .policy li { color: var(--muted); font-size: 14.5px; }
+  .policy ul { margin: 8px 0 8px 22px; }
+  .policy li { margin: 6px 0; }
+  .policy li b { color: var(--text); }
+  .upd { text-align: center; font-size: 12.5px; color: var(--faint); margin-bottom: 36px; }
+
+  footer { border-top: 1px solid var(--line); padding: 54px 0 60px; text-align: center; color: var(--faint); font-size: 13px; position: relative; z-index: 1; }
+  footer .brand { justify-content: center; font-size: 36px; margin-bottom: 8px; }
+  footer .fl { display: flex; gap: 26px; justify-content: center; flex-wrap: wrap; margin: 20px 0; font-size: 13.5px; color: var(--muted); }
+  footer .fl a:hover { color: #fff; }
+
+  /* custom modal (no browser alert) */
+  .modal { position: fixed; inset: 0; z-index: 100; display: none; place-items: center; background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(8px); padding: 20px; }
+  .modal.show { display: grid; }
+  .modal-box {
+    width: min(380px, 100%); text-align: center; padding: 34px 28px; border-radius: 28px;
+    background: linear-gradient(160deg, #1a0010, #060306); border: 1px solid rgba(255, 101, 174, 0.55);
+    box-shadow: 0 0 60px rgba(255, 22, 128, 0.3);
+  }
+  .modal-box .h { width: 62px; height: 62px; margin: 0 auto 16px; border-radius: 50%; display: grid; place-items: center; font-size: 28px; border: 1px solid var(--lineP); background: rgba(255, 77, 157, 0.1); }
+  .modal-box h4 { font-size: 20px; margin-bottom: 8px; }
+  .modal-box p { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+
+  /* reveal */
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; text-align: center; }
+    .lead { margin-left: auto; margin-right: auto; }
+    .cta, .trust { justify-content: center; }
+    .phone-wrap { margin-top: 30px; }
+  }
+  @media (max-width: 720px) {
+    .links a:not(.btn) { display: none; }
+    section { padding: 72px 0; }
+    .hero { padding-top: 56px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .phone { animation: none; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="wrap nav-in">
+    <a href="#top" class="brand script">LOVE POINT <i>♥</i></a>
+    <div class="links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#faq">FAQ</a>
+      <a href="#download" class="btn sm">Download</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="pill">PRIVATE · ROMANTIC · SAFE</span>
+      <h1 class="script grad-text">LOVE POINT</h1>
+      <div class="tag">Where two hearts stay connected</div>
+      <p class="lead">
+        A private, beautifully crafted space for just two people.
+        No feed. No followers. No strangers. Only you and the one you love.
+      </p>
+      <div class="cta">
+        <a class="btn" id="apk-hero" href="#download">⬇&nbsp; Download for Android</a>
+        <a class="btn ghost" href="#how">See how it works</a>
+      </div>
+      <p class="note">Android · Free · Version <span class="ver">1.0.0</span></p>
+
+      <div class="trust">
+        <div><b>1 : 1</b><span>Only two hearts</span></div>
+        <div><b>6-digit</b><span>Permanent ID</span></div>
+        <div><b>Private</b><span>Media storage</span></div>
+      </div>
+    </div>
+
+    <!-- Phone mockup built with CSS -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="screen">
+          <div class="notch"></div>
+          <div class="s-head">
+            <span class="s-menu">☰ MENU</span>
+            <span class="s-logo script">LOVE POINT</span>
+            <span class="s-bell">🔔</span>
+          </div>
+          <div class="s-greet">
+            <div class="s-av">👤</div>
+            <div><small>Good Evening,</small><b>Your Love ♥</b></div>
+          </div>
+          <div class="s-card">
+            <small>♥ YOUR LOVE POINT ID ♥</small>
+            <div class="n">482731</div>
+            <div class="s-btn">SHARE LOVE POINT →</div>
+          </div>
+          <div class="s-find">
+            <b>♥ FIND SOMEONE YOU LOVE</b>
+            <div class="s-input">000000</div>
+          </div>
+          <div class="s-nav">
+            <span class="on">⌂</span><span>💬</span><span>♡</span><span>🎁</span><span>👤</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="divider"></div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="wrap">
+    <div class="eyebrow reveal">FEATURES</div>
+    <h2 class="reveal">Everything for <span class="grad-text">your little world</span></h2>
+    <p class="sub reveal">Simple, elegant and made only for two.</p>
+
+    <div class="grid">
+      <div class="card reveal">
+        <div class="ico">💬</div>
+        <h3>Private Chat</h3>
+        <p>A one-to-one space for text, photos and videos. Only the two of you can read it.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ico">📸</div>
+        <h3>Memory Wall</h3>
+        <p>Keep your moments together with a photo, a title and a note. Both of you can see them, always.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ico">🔔</div>
+        <h3>Gentle Notifications</h3>
+        <p>Know when your partner writes or adds a memory. You choose exactly what to be told about.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ico">🆔</div>
+        <h3>Your LOVE POINT ID</h3>
+        <p>A permanent 6-digit ID you share only with the person you want to connect with.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ico">🎁</div>
+        <h3>Surprise &amp; Connect <span class="soon">SOON</span></h3>
+        <p>Send sweet surprises and scheduled notes to the one you love.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ico">📞</div>
+        <h3>Voice &amp; Video Calls <span class="soon">SOON</span></h3>
+        <p>Hear and see each other, wherever you are.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HOW -->
+<section id="how">
+  <div class="wrap">
+    <div class="eyebrow reveal">HOW IT WORKS</div>
+    <h2 class="reveal">Connected in <span class="grad-text">four steps</span></h2>
+    <p class="sub reveal">From sign up to your first message in under a minute.</p>
+
+    <div class="grid steps">
+      <div class="card step reveal"><h3>Create your account</h3><p>Sign up with your name, email and a password.</p></div>
+      <div class="card step reveal"><h3>Get your ID</h3><p>You instantly receive your permanent 6-digit LOVE POINT ID.</p></div>
+      <div class="card step reveal"><h3>Find your partner</h3><p>Enter their ID, check their profile and start a private chat.</p></div>
+      <div class="card step reveal"><h3>Share memories</h3><p>Connect your Memory Wall and keep your moments forever.</p></div>
+    </div>
+
+    <div class="showcase reveal">
+      <div class="idcard">
+        <small>♥ YOUR LOVE POINT ID ♥</small>
+        <div class="num">482731</div>
+        <p>Share this ID with someone special ❤️</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PRIVACY -->
+<section id="privacy">
+  <div class="wrap">
+    <div class="eyebrow reveal">PRIVACY</div>
+    <h2 class="reveal">Built to <span class="grad-text">stay private</span></h2>
+    <p class="sub reveal">We are honest about security: no app is perfectly unhackable, so we focus on strong, real protection.</p>
+
+    <div class="two">
+      <div class="card reveal">
+        <h3>How we protect you</h3>
+        <ul class="list">
+          <li><span><b>Private chats.</b> Only the two people in a chat can read its messages, enforced by database rules.</span></li>
+          <li><span><b>Private media.</b> Photos, videos and memories live in private storage, opened with secure links.</span></li>
+          <li><span><b>Mutual Memory Wall.</b> Opens only after both of you enter each other's ID.</span></li>
+        </ul>
+      </div>
+      <div class="card reveal">
+        <h3>You stay in control</h3>
+        <ul class="list">
+          <li><span><b>Delete</b> your own messages and memories anytime.</span></li>
+          <li><span><b>Change your password</b> and sign out from all devices.</span></li>
+          <li><span><b>Remove your account</b> from inside the app.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOWNLOAD -->
+<section id="download" style="padding-top:40px">
+  <div class="wrap">
+    <div class="dl reveal">
+      <div class="eyebrow">GET THE APP</div>
+      <h2>Download <span class="script grad-text" style="font-size:1.25em">LOVE POINT</span></h2>
+      <p class="sub">Install it on your Android phone and invite your special one.</p>
+      <a class="btn" id="apk-main" href="#">⬇&nbsp; Download APK</a>
+      <div class="meta">
+        <span>Android</span><span>·</span><span>Free</span><span>·</span><span>Version <span class="ver">1.0.0</span></span>
+      </div>
+      <p class="note" style="margin-top:24px">
+        Android may ask you to allow installs from this source. Only download from this page.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap" style="max-width:820px">
+    <div class="eyebrow reveal">FAQ</div>
+    <h2 class="reveal">Questions, <span class="grad-text">answered</span></h2>
+    <p class="sub reveal">Can't find what you need? Write to us anytime.</p>
+
+    <details class="reveal"><summary>What is LOVE POINT?</summary><p>A private app for two people with one-to-one chat, a shared Memory Wall and more. It is not a social media or dating app.</p></details>
+    <details class="reveal"><summary>What is a LOVE POINT ID?</summary><p>A permanent 6-digit number given to you at sign up. Share it with your partner so they can find you. It never changes.</p></details>
+    <details class="reveal"><summary>Who can see my chats and memories?</summary><p>Only you and the person you share them with. Chats are private to the two people in them, and a Memory Wall is private to the two connected partners.</p></details>
+    <details class="reveal"><summary>Is it free?</summary><p>Yes, LOVE POINT is free to download and use.</p></details>
+    <details class="reveal"><summary>Is there an iPhone version?</summary><p>Not yet. LOVE POINT is currently available for Android.</p></details>
+    <details class="reveal"><summary>How do I delete my account?</summary><p>Open Account inside the app and choose Remove Account. This permanently deletes your account.</p></details>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PRIVACY POLICY -->
+<section id="privacy-policy">
+  <div class="wrap">
+    <div class="eyebrow">LEGAL</div>
+    <h2>Privacy Policy</h2>
+    <p class="upd">Last updated: <span id="year-date"></span></p>
+
+    <div class="policy">
+      <p>LOVE POINT ("we", "our") is a private messaging and memory app for two people. This policy explains what we collect and why.</p>
+
+      <h3>1. Information we collect</h3>
+      <ul>
+        <li><b>Account details:</b> your name, email address and password (stored securely by our authentication provider).</li>
+        <li><b>Profile:</b> your LOVE POINT ID and optional profile photo.</li>
+        <li><b>Content you create:</b> chat messages, photos and videos you send, and memories (photo, title, note).</li>
+        <li><b>Notification data:</b> in-app notifications, your notification preferences and a device push token.</li>
+        <li><b>Basic technical data:</b> app version and device platform, only when you contact support.</li>
+      </ul>
+
+      <h3>2. How we use it</h3>
+      <ul>
+        <li>To create your account and let you chat privately with your partner.</li>
+        <li>To store and show your memories to you and your connected partner.</li>
+        <li>To send you notifications you have chosen to receive.</li>
+        <li>To provide support and keep the app secure.</li>
+      </ul>
+
+      <h3>3. Who can see your content</h3>
+      <p>Chat messages are visible only to the two participants. A Memory Wall is visible only to the two partners who connected it. Photos, videos and profile pictures are kept in private storage. We do not sell your data and we do not show ads.</p>
+
+      <h3>4. Where data is stored</h3>
+      <p>Your data is stored with our backend provider, Supabase, using access rules that restrict each piece of data to the people it belongs to.</p>
+
+      <h3>5. Permissions</h3>
+      <ul>
+        <li><b>Photos / media:</b> to choose pictures and videos to send or save as memories.</li>
+        <li><b>Camera:</b> to take a profile picture.</li>
+        <li><b>Notifications:</b> to tell you about new messages and memories.</li>
+      </ul>
+
+      <h3>6. Your choices and deletion</h3>
+      <p>You can delete your own messages and memories, change your name and password, turn notification types on or off, sign out from all devices, and permanently remove your account from inside the app. You may also contact us to request deletion.</p>
+
+      <h3>7. Security</h3>
+      <p>We use access rules, private storage and secure connections to protect your data. No system is completely secure, so please use a strong password and never share it.</p>
+
+      <h3>8. Children</h3>
+      <p>LOVE POINT is not intended for children under 13 (or the minimum age in your country).</p>
+
+      <h3>9. Changes</h3>
+      <p>We may update this policy. The latest version is always on this page.</p>
+
+      <h3>10. Contact</h3>
+      <p>Questions or deletion requests: <a id="policy-mail" href="#" style="color:var(--pink)"></a></p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="brand script">LOVE POINT <i>♥</i></div>
+    <div>Where two hearts stay connected</div>
+    <div class="fl">
+      <a href="#features">Features</a>
+      <a href="#privacy-policy">Privacy Policy</a>
+      <a href="#faq">FAQ</a>
+      <a id="footer-mail" href="#">Contact</a>
+    </div>
+    <div>Made with love · © <span id="year"></span> LOVE POINT</div>
+  </div>
+</footer>
+
+<!-- Custom modal -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="h">♥</div>
+    <h4>Coming very soon ❤️</h4>
+    <p>The download link is almost ready. Please check back shortly.</p>
+    <button class="btn" id="modal-close" style="width:100%">OK</button>
+  </div>
+</div>
+
+<script>
+  /* ============ EDIT THESE 3 THINGS ============ */
+  var APK_URL = "https://github.com/dharanishsakthivel18-droid/love-point-updates/releases/latest/download/love-point.apk";;                            // e.g. https://github.com/yourname/love-point/releases/latest/download/love-point.apk
+  var SUPPORT_EMAIL = "dharanishsakthivel107@gmail.com"; // your real email
+  var APP_VERSION = "1.0.4";
+  /* ============================================== */
+
+  document.querySelectorAll(".ver").forEach(function (el) { el.textContent = APP_VERSION; });
+  document.getElementById("year").textContent = new Date().getFullYear();
+  document.getElementById("year-date").textContent =
+    new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" });
+
+  var mailto = "mailto:" + SUPPORT_EMAIL;
+  var pm = document.getElementById("policy-mail");
+  pm.href = mailto; pm.textContent = SUPPORT_EMAIL;
+  document.getElementById("footer-mail").href = mailto;
+
+  var modal = document.getElementById("modal");
+  function showModal() { modal.classList.add("show"); }
+  document.getElementById("modal-close").addEventListener("click", function () { modal.classList.remove("show"); });
+  modal.addEventListener("click", function (e) { if (e.target === modal) modal.classList.remove("show"); });
+
+  var main = document.getElementById("apk-main");
+  var hero = document.getElementById("apk-hero");
+
+  if (APK_URL) {
+    main.href = APK_URL; main.setAttribute("download", "");
+    hero.href = APK_URL; hero.setAttribute("download", "");
+  } else {
+    main.addEventListener("click", function (e) { e.preventDefault(); showModal(); });
+  }
+
+  /* scroll reveal */
+  var items = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12 });
+    items.forEach(function (el) { io.observe(el); });
+  } else {
+    items.forEach(function (el) { el.classList.add("in"); });
+  }
+</script>
+</body>
+</html>
